@@ -30,6 +30,13 @@ def get_scp(url):
         scp_details['content'] = scps.findAll('p')
         f = 0
         for i in scp_details['content']:
+            i = i.text
+            if i.count("Description: ") >= 1:
+                scp_details['mainbody'] = scp_details['content'][f].text
+                break
+            f += 1
+        f = 0
+        for i in scp_details['content']:
             print(i)
             print(i.text)
             i = i.text
@@ -68,7 +75,10 @@ class MyClient(discord.Client):
                             scpnum.append(i)
                 if len(scpnum) > -1:
                     start = time.time()
-                    if isinstance(scpnum[0], int) == True:
+                    setfile = open("settings.txt","r")
+                    filset = int(setfile.readline())
+                    setfile.close()
+                    if isinstance(scpnum[0], int) == True and filset == 0:
                         for num in scpnum:
                             while len(str(num)) < 3 and len(str(num)) > 0:
                                 num  = str( "0" + str(num) )
@@ -85,8 +95,10 @@ class MyClient(discord.Client):
                                 scp_content1 = scp_content[3].text
                                 scp_content2 = scp_content[5].text[0:(800 - len(scp_content1))]
                                 scp_content3 = "{0}\n{1}...".format(scp_content1,scp_content2)
+                                if len(scp_content3) <= 40:
+                                    scp_content3 = scp_det['mainbody']
                                 if len(scp_content3) >= 1024:
-                                    scp_content3 = scp_content3[:800]
+                                    scp_content3 = "{0}...".format(scp_content3[:797]) 
                                 embed = discord.Embed(title="SCP-{0}".format(num),url=link,color=0xff0000)
                                 print(scp_image)
                                 if not scp_image:
@@ -114,6 +126,8 @@ class MyClient(discord.Client):
                         scp_content1 = scp_content[3].text
                         scp_content2 = scp_content[5].text[:1000 - len(scp_content1)] + "..."
                         scp_content3 = "{0}\n{1}...".format(scp_content1,scp_content2)
+                        if len(scp_content3) <= 40:
+                            scp_content3 = scp_det['mainbody']
                         if len(scp_content3) >= 1024:
                             scp_content3 = scp_content3[:800]
                         embed = discord.Embed(title="{0}".format(str(scpnum[0]).upper()),url=link,color=0xff0000)
