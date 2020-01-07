@@ -58,79 +58,82 @@ class MyClient(discord.Client):
         if message.author.id != client.user.id:
             print('Message from {0.author}: {0.content}'.format(message))
             #await message.channel.send(message.content)
-
-            scpnum = [int(i) for i in message.content.split() if i.isdigit()] 
-            if not scpnum:
-                scpnum = []
-                tempnum = message.content.split(" ")
-                for i in tempnum:
-                    if i.upper().find("SCP-") > -1:
-                        scpnum.append(i)
-            if len(scpnum) > -1:
-                start = time.time()
-                print(scpnum)
-                if isinstance(scpnum[0], int) == True:
-                    for num in scpnum:
-                        while len(str(num)) < 3 and len(str(num)) > 0 and num.isdigit:
-                            num  = str( "0" + str(num) )
-                        #if num.isalpha == True:
-                            #num = num[3:]
-                        if len(str(num)) >= 3:
-                            print(num)
-                            link = "http://www.scp-wiki.net/scp-{0}".format(num)                   
-                            scp_det = get_scp(link)
-                            scp_name = scp_det['name']
-                            scp_class = scp_det['class'][14:]
-                            scp_image = scp_det['image']
-                            print(scp_image)
-                            scp_content = scp_det['content']
-                            scp_content1 = scp_content[3].text
-                            scp_content2 = scp_content[5].text[0:(800 - len(scp_content1))] + "..."
-                            print(len(scp_content2))
-                            print(len(scp_content1))
-                            embed = discord.Embed(title="SCP-{0}".format(num),url=link,color=0xff0000)
-                            print(scp_image)
-                            if not scp_image:
-                                embed.set_thumbnail(url="https://i.redd.it/f1u2wf28nqn21.jpg")
-                            else:
-                                if scp_image[0].get('src') != "http://scp-wiki.wdfiles.com/local--files/component:heritage-rating/scp-heritage-v3.png":
-                                    embed.set_thumbnail(url=scp_image[0].get('src'))
+            try:
+                scpnum = [int(i) for i in message.content.split() if i.isdigit()] 
+                if not scpnum:
+                    scpnum = []
+                    tempnum = message.content.split(" ")
+                    for i in tempnum:
+                        if i.upper().find("SCP-") > -1:
+                            scpnum.append(i)
+                if len(scpnum) > -1:
+                    start = time.time()
+                    if isinstance(scpnum[0], int) == True:
+                        for num in scpnum:
+                            while len(str(num)) < 3 and len(str(num)) > 0:
+                                num  = str( "0" + str(num) )
+                            #if num.isalpha == True:
+                                #num = num[3:]
+                            if len(str(num)) >= 3:
+                                link = "http://www.scp-wiki.net/scp-{0}".format(num)                   
+                                scp_det = get_scp(link)
+                                scp_name = scp_det['name']
+                                scp_class = scp_det['class'][14:]
+                                scp_image = scp_det['image']
+                                print(scp_image)
+                                scp_content = scp_det['content']
+                                scp_content1 = scp_content[3].text
+                                scp_content2 = scp_content[5].text[0:(800 - len(scp_content1))]
+                                scp_content3 = "{0}\n{1}...".format(scp_content1,scp_content2)
+                                if len(scp_content3) >= 1024:
+                                    scp_content3 = scp_content3[:800]
+                                embed = discord.Embed(title="SCP-{0}".format(num),url=link,color=0xff0000)
+                                print(scp_image)
+                                if not scp_image:
+                                    embed.set_thumbnail(url="https://i.redd.it/f1u2wf28nqn21.jpg")
                                 else:
-                                    if len(scp_image) > 0:
-                                        embed.set_thumbnail(url="https://i.redd.it/f1u2wf28nqn21.jpg")
+                                    if scp_image[0].get('src') != "http://scp-wiki.wdfiles.com/local--files/component:heritage-rating/scp-heritage-v3.png":
+                                        embed.set_thumbnail(url=scp_image[0].get('src'))
                                     else:
-                                        embed.set_thumbnail(url=scp_image[1].get('src'))
-                            embed.add_field(name="SCP CLASS:", value="{0}".format(scp_class), inline=False)
-                            embed.add_field(name="CONTENT:", value="{0}\n{1}".format(scp_content1,scp_content2), inline=False)
-                            await message.channel.send(embed=embed)
-                            print("Took {0:0.5f} seconds to process".format(time.time() - start))
-                else:
-                    link = "http://www.scp-wiki.net/{0}".format(scpnum)                   
-                    scp_det = get_scp(link)
-                    scp_name = scp_det['name']
-                    scp_class = scp_det['class'][14:]
-                    scp_image = scp_det['image']
-                    print(scp_image)
-                    scp_content = scp_det['content']
-                    scp_content1 = scp_content[3].text
-                    scp_content2 = scp_content[5].text[:1000 - len(scp_content1)] + "..."
-                    embed = discord.Embed(title="{0}".format(str(scpnum[0]).upper()),url=link,color=0xff0000)
-                    print(scp_image)
-                    if not scp_image:
-                        embed.set_thumbnail(url="https://i.redd.it/f1u2wf28nqn21.jpg")
+                                        if len(scp_image) > 0:
+                                            embed.set_thumbnail(url="https://i.redd.it/f1u2wf28nqn21.jpg")
+                                        else:
+                                            embed.set_thumbnail(url=scp_image[1].get('src'))
+                                embed.add_field(name="SCP CLASS:", value="{0}".format(scp_class), inline=False)
+                                embed.add_field(name="CONTENT:", value="{0}".format(scp_content3), inline=False)
+                                await message.channel.send(embed=embed)
+                                print("Took {0:0.5f} seconds to process".format(time.time() - start))
                     else:
-                        if scp_image[0].get('src') != "http://scp-wiki.wdfiles.com/local--files/component:heritage-rating/scp-heritage-v3.png":
-                            embed.set_thumbnail(url=scp_image[0].get('src'))
+                        link = "http://www.scp-wiki.net/{0}".format(scpnum)                   
+                        scp_det = get_scp(link)
+                        scp_name = scp_det['name']
+                        scp_class = scp_det['class'][14:]
+                        scp_image = scp_det['image']
+                        print(scp_image)
+                        scp_content = scp_det['content']
+                        scp_content1 = scp_content[3].text
+                        scp_content2 = scp_content[5].text[:1000 - len(scp_content1)] + "..."
+                        scp_content3 = "{0}\n{1}...".format(scp_content1,scp_content2)
+                        if len(scp_content3) >= 1024:
+                            scp_content3 = scp_content3[:800]
+                        embed = discord.Embed(title="{0}".format(str(scpnum[0]).upper()),url=link,color=0xff0000)
+                        print(scp_image)
+                        if not scp_image:
+                            embed.set_thumbnail(url="https://i.redd.it/f1u2wf28nqn21.jpg")
                         else:
-                            if len(scp_image) > 0:
-                                embed.set_thumbnail(url="https://i.redd.it/f1u2wf28nqn21.jpg")
+                            if scp_image[0].get('src') != "http://scp-wiki.wdfiles.com/local--files/component:heritage-rating/scp-heritage-v3.png":
+                                embed.set_thumbnail(url=scp_image[0].get('src'))
                             else:
-                                embed.set_thumbnail(url=scp_image[1].get('src'))
-                    embed.add_field(name="SCP CLASS:", value="{0}".format(scp_class), inline=False)
-                    embed.add_field(name="CONTENT:", value="{0}\n{1}".format(scp_content1,scp_content2), inline=False)
-                    await message.channel.send(embed=embed)
-                    print("Took {0:0.5f} seconds to process".format(time.time() - start))
-
+                                if len(scp_image) > 0:
+                                    embed.set_thumbnail(url="https://i.redd.it/f1u2wf28nqn21.jpg")
+                                else:
+                                    embed.set_thumbnail(url=scp_image[1].get('src'))
+                        embed.add_field(name="SCP CLASS:", value="{0}".format(scp_class), inline=False)
+                        embed.add_field(name="CONTENT:", value="{0}".format(scp_content3), inline=False)
+                        await message.channel.send(embed=embed)
+                        print("Took {0:0.5f} seconds to process".format(time.time() - start))
+            except IndexError:
+                print("Message:{0} | Most likely not a scp request".format(message.content))
                 
 
 
