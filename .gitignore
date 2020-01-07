@@ -41,3 +41,6 @@ prawredsettings.py
 
 # Ignore discord py settings
 disbotsettings.py
+
+# Ignore img folder
+/img/*
