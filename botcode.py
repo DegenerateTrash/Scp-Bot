@@ -59,7 +59,7 @@ class MyClient(discord.Client):
             print('Message from {0.author}: {0.content}'.format(message))
             #await message.channel.send(message.content)
 
-            scpnum = [str(i) for i in message.content.split() if i.isdigit()] 
+            scpnum = [int(i) for i in message.content.split() if i.isdigit()] 
             if not scpnum:
                 scpnum = []
                 tempnum = message.content.split(" ")
@@ -69,9 +69,8 @@ class MyClient(discord.Client):
             if len(scpnum) > -1:
                 start = time.time()
                 print(scpnum)
-                scpnum = scpnum[0]
-                if not scpnum.isdigit:
-                    for num in str(scpnum):
+                if isinstance(scpnum[0], int) == True:
+                    for num in scpnum:
                         while len(str(num)) < 3 and len(str(num)) > 0 and num.isdigit:
                             num  = str( "0" + str(num) )
                         #if num.isalpha == True:
@@ -86,7 +85,9 @@ class MyClient(discord.Client):
                             print(scp_image)
                             scp_content = scp_det['content']
                             scp_content1 = scp_content[3].text
-                            scp_content2 = scp_content[5].text[:1000 - len(scp_content1)] + "..."
+                            scp_content2 = scp_content[5].text[0:(800 - len(scp_content1))] + "..."
+                            print(len(scp_content2))
+                            print(len(scp_content1))
                             embed = discord.Embed(title="SCP-{0}".format(num),url=link,color=0xff0000)
                             print(scp_image)
                             if not scp_image:
@@ -113,7 +114,7 @@ class MyClient(discord.Client):
                     scp_content = scp_det['content']
                     scp_content1 = scp_content[3].text
                     scp_content2 = scp_content[5].text[:1000 - len(scp_content1)] + "..."
-                    embed = discord.Embed(title="{0}".format(scpnum.upper()),url=link,color=0xff0000)
+                    embed = discord.Embed(title="{0}".format(str(scpnum[0]).upper()),url=link,color=0xff0000)
                     print(scp_image)
                     if not scp_image:
                         embed.set_thumbnail(url="https://i.redd.it/f1u2wf28nqn21.jpg")
@@ -134,5 +135,5 @@ class MyClient(discord.Client):
 
 
 client = MyClient()
-client.run("NjY0MTI4MjAzNzkwNzQ1NjEx.XhSjnQ.uQgMTjCBeYo672peCPpALK2NUBU")
+client.run(disbotsettings.token)
 
