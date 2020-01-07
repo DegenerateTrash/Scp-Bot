@@ -75,10 +75,7 @@ class MyClient(discord.Client):
                             scpnum.append(i)
                 if len(scpnum) > -1:
                     start = time.time()
-                    setfile = open("settings.txt","r")
-                    filset = int(setfile.readline())
-                    setfile.close()
-                    if isinstance(scpnum[0], int) == True and filset == 0:
+                    if isinstance(scpnum[0], int) == True:
                         for num in scpnum:
                             while len(str(num)) < 3 and len(str(num)) > 0:
                                 num  = str( "0" + str(num) )
