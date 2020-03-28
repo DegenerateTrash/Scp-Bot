@@ -10,6 +10,10 @@ import urllib3
 from html.parser import HTMLParser
 from bs4 import BeautifulSoup
 import disbotsettings
+import urllib.request
+import uuid
+
+
 
 class MyHTMLParser(HTMLParser):
     def handle_data(self, data):
@@ -101,8 +105,10 @@ class MyClient(discord.Client):
                                 if not scp_image:
                                     embed.set_thumbnail(url="https://i.redd.it/f1u2wf28nqn21.jpg")
                                 else:
+                                    unique_filename = str(uuid.uuid4())
                                     if scp_image[0].get('src') != "http://scp-wiki.wdfiles.com/local--files/component:heritage-rating/scp-heritage-v3.png":
                                         embed.set_thumbnail(url=scp_image[0].get('src'))
+                                        urllib.request.urlretrieve(scp_image[0].get('src'), "img/{0}.png".format(unique_filename))
                                     else:
                                         if len(scp_image) > 0:
                                             embed.set_thumbnail(url="https://i.redd.it/f1u2wf28nqn21.jpg")
@@ -111,7 +117,7 @@ class MyClient(discord.Client):
                                 embed.add_field(name="SCP CLASS:", value="{0}".format(scp_class), inline=False)
                                 embed.add_field(name="CONTENT:", value="{0}".format(scp_content3), inline=False)
                                 await message.channel.send(embed=embed)
-                                print("Took {0:0.5f} seconds to process".format(time.time() - start))
+                                print("Took {0:0.5f} seconds to process, {1}".format(time.time() - start, scp_name))
                     else:
                         link = "http://www.scp-wiki.net/{0}".format(scpnum)                   
                         scp_det = get_scp(link)
@@ -142,7 +148,7 @@ class MyClient(discord.Client):
                         embed.add_field(name="SCP CLASS:", value="{0}".format(scp_class), inline=False)
                         embed.add_field(name="CONTENT:", value="{0}".format(scp_content3), inline=False)
                         await message.channel.send(embed=embed)
-                        print("Took {0:0.5f} seconds to process".format(time.time() - start))
+                        print("Took {0:0.5f} seconds to process, {1}".format(time.time() - start, scp_name))
             except IndexError:
                 print("Message:{0} | Most likely not a scp request".format(message.content))
                 
